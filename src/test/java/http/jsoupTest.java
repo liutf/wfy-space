@@ -3,6 +3,7 @@ package http;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -39,6 +40,26 @@ public class jsoupTest {
         Document doc = Jsoup.connect(url).get();
         Element element = doc.getElementById("fe_text");
         System.out.println(element.val());
+    }
+
+    @Test
+    public void get(){
+        String htmlStr = "<table id=\"maillist\">" +
+                "<tbody>" +
+                "<tr>" +
+                "<th>寄件人</th><th>主题</th><th>收件日期</th></tr>" +
+                "<tr onclick=\"location='readmail.html?mid=welcome'\">" +
+                "<td>no-reply@10minutemail.net</td>" +
+                "<td><a href=\"readmail.html?mid=welcome\">嗨，欢迎来到10分钟邮箱！</a></td>" +
+                "<td><span title=\"2016-09-13 13:39:11 UTC\">2 分钟 之前</span></td></tr></tbody>" +
+                "</table>";
+
+        Document doc = Jsoup.parse(htmlStr);
+        Elements elements = doc.select("a[href]");
+        for (Element element : elements) {
+            System.out.println(element.attr("href"));
+        }
+
     }
 
 }

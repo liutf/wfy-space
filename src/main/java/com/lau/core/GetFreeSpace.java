@@ -1,54 +1,76 @@
 package com.lau.core;
 
-import com.github.kevinsawicki.http.HttpRequest;
-import com.lau.utils.HttpUtil;
+import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
+import com.lau.utils.MyHttpUtil;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Created by liutf on 2016-09-12.
  */
 public class GetFreeSpace {
 
-    private String WF_INVIETE_URL = "https://workflowy.com/invite/3bf81761.emlx";
-    private String WF_REGISTER_URL = "https://workflowy.com/accounts/register/";
-    private String TEN_MINUT_EMAIL_URL = "https://10minutemail.org/";
+    private String invieteUrl = "https://workflowy.com/invite/3bf81761.emlx";
+    private String registerUrl = "https://workflowy.com/accounts/register/";
+    private String getEmailUrl = "https://10minutemail.net/";
 
     public void toExtend() throws Exception{
 
+        String emailAcct = getEmailAcct();
+
         getInvitePage();
 
+        Thread.sleep(20000);
     }
+
 
     public void getInvitePage() throws IOException {
-        HttpUtil.httpGetByUrl(WF_INVIETE_URL);
+//        HttpUtil.httpGetByUrl(invieteUrl);
+        HttpUtil.doGet(invieteUrl);
     }
 
-    public void regist(){
-
+    public void doRegist(String emailAddr){
+        HashMap<String, String> paraMap = Maps.newHashMap();
+        paraMap.put("email",emailAddr);
+        paraMap.put("email2",emailAddr);
+        paraMap.put("password","123456");
+        MyHttpUtil.doPost(registerUrl,paraMap,false);
     }
 
     public String getEmailAcct() throws IOException {
-        String emailAcct = "";
-//        String content = HttpUtil.httpGetByUrl(TEN_MINUT_EMAIL_URL);
-        String content = HttpRequest.get(TEN_MINUT_EMAIL_URL).body();
-        System.out.println(content);
-        String content1=new String(content);
-        int index=content1.indexOf("<div class=\"div-m-0 text-c\">");
-        String tmp=content1.substring(index);
-        int index2=tmp.indexOf("</div>");
-        String tmp2=tmp.substring(0,index2);
-        String emailtmp=tmp2.substring(tmp.indexOf("value=")+7,tmp.indexOf(" />")-1);
-        System.out.println(emailtmp);
-        return emailAcct;
+        String htmlContent = new String(HttpUtil.doGet(getEmailUrl));
+//        System.out.println(htmlContent);
+        Document doc = Jsoup.parse(htmlContent);
+        String emailAddr = doc.getElementById("fe_text").val();
+        System.out.println(emailAddr);
+        return emailAddr;
     }
 
 
-
-
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         GetFreeSpace getFreeSpace = new GetFreeSpace();
-        getFreeSpace.getEmailAcct();
+        String emailAcct = getFreeSpace.getEmailAcct();
+
+        getFreeSpace.getInvitePage();
+
+        getFreeSpace.doRegist(emailAcct);
+
+        Thread.sleep(20000);
+
+        byte[] bytes = HttpUtil.doGet("https://10minutemail.net/");
+        String htmlContent = new String(bytes, Charsets.UTF_8);
+        Document doc = Jsoup.parse(htmlContent);
+        Elements elements = doc.select("a[href]");
+        for (Element element : elements) {
+            System.out.println(element.attr("href"));
+        }
+
     }
 
 
