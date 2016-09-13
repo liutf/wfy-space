@@ -35,7 +35,12 @@ public class GetFreeSpace {
         HttpUtil.doGet(invieteUrl);
     }
 
-    public void doRegist(String emailAddr){
+
+    public void toRegist() throws IOException {
+        HttpUtil.doGet(registerUrl);
+    }
+
+    public void submitRegist(String emailAddr){
         HashMap<String, String> paraMap = Maps.newHashMap();
         paraMap.put("email",emailAddr);
         paraMap.put("email2",emailAddr);
@@ -59,16 +64,19 @@ public class GetFreeSpace {
 
         getFreeSpace.getInvitePage();
 
-        getFreeSpace.doRegist(emailAcct);
+        getFreeSpace.toRegist();
 
-        Thread.sleep(20000);
+        getFreeSpace.submitRegist(emailAcct);
+
+        Thread.sleep(1000 * 60);
 
         byte[] bytes = HttpUtil.doGet("https://10minutemail.net/");
         String htmlContent = new String(bytes, Charsets.UTF_8);
         Document doc = Jsoup.parse(htmlContent);
-        Elements elements = doc.select("a[href]");
-        for (Element element : elements) {
-            System.out.println(element.attr("href"));
+        Element element = doc.getElementById("maillist");
+        Elements links  = element.getElementsByTag("a");
+        for (Element link : links) {
+            System.out.println(link.attr("href"));
         }
 
     }

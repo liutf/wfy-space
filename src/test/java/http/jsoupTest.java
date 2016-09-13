@@ -55,9 +55,10 @@ public class jsoupTest {
                 "</table>";
 
         Document doc = Jsoup.parse(htmlStr);
-        Elements elements = doc.select("a[href]");
-        for (Element element : elements) {
-            System.out.println(element.attr("href"));
+        Element element = doc.getElementById("maillist");
+        Elements links  = element.getElementsByTag("a");
+        for (Element link : links) {
+            System.out.println(link.attr("href"));
         }
 
     }
