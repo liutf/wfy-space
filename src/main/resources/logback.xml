@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<!-- 定义日志文件 输入位置 -->
+	<property name="log_dir" value="${user.home}/logs/wfy-space/" />
+	<!-- 日志最大的历史 30天 -->
+	<property name="maxHistory" value="30" />
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss}  %-5level %logger - [%msg]%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="lauAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>INFO</level>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- 按天回滚 daily -->
+			<fileNamePattern>
+				${log_dir}/%d{yyyy-MM-dd}/wfy-space.log
+			</fileNamePattern>
+			<!-- 日志最大的历史 60天 -->
+			<maxHistory>${maxHistory}</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss}  %-5level %logger - [%msg]%n</pattern>
+		</encoder>
+	</appender>
+	<logger name="com.lau" level="INFO" additivity="false">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="lauAppender" />
+	</logger>
+
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+	</root>
+
+</configuration>

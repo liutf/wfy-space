@@ -1,4 +1,4 @@
-package http;
+package com.lau.http;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
