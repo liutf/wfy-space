@@ -38,9 +38,9 @@ public class GetFreeSpaceRunable implements Runnable {
 
             } catch (Exception e) {
                 log.error("线程 [{}] 处理异常.异常原因: ",Thread.currentThread().getName(),e);
-                isRun = false;
-                Thread.currentThread().interrupt();
-                log.error("线程 [{}] 终止..",Thread.currentThread().getName());
+//                isRun = false;
+//                Thread.currentThread().interrupt();
+//                log.error("线程 [{}] 终止..",Thread.currentThread().getName());
             } finally {
                 visitEmailMethod.releaseConnection();
                 log.error("关闭连接..");
@@ -55,7 +55,9 @@ public class GetFreeSpaceRunable implements Runnable {
 
             dealWorkFlowy(getEmailAddr(visitEmailMethod));
 
-            Thread.sleep(1000 * 10);
+            System.out.println("-- "+ Thread.currentThread().getName() +"-- 开始休眠..");
+            Thread.sleep(2000 * 10);
+            System.out.println("-- "+ Thread.currentThread().getName() +"-- 恢复..");
 
             dealEmailInbox(httpClient, visitEmailMethod);
         } else {
