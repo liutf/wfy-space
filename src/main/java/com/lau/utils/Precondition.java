@@ -21,7 +21,7 @@ public class Precondition {
      * @throws Exception
      */
     public static void checkArgument(String key,Object value) throws Exception{
-        logger.info("checkArgument: key:{} , value:{}" , key,value);
+        logger.debug("checkArgument: key:{} , value:{}" , key,value);
         boolean expression = false;
         if(value instanceof String){
             expression = StringUtil.isNotBlank((String) value);
@@ -36,7 +36,7 @@ public class Precondition {
      * @throws Exception
      */
     public static void checkStringArgument(String key,String value) throws Exception{
-        logger.info("checkArgument: key:{} , value:{}" , key,value);
+        logger.debug("checkArgument: key:{} , value:{}" , key,value);
         boolean expression = StringUtil.isNotBlank(value);
         Preconditions.checkArgument(expression, "Param ["+ key +"] isBlank.");
     }

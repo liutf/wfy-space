@@ -1,5 +1,6 @@
 package com.lau.core.service;
 
+import com.google.common.base.Preconditions;
 import com.lau.utils.Precondition;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -28,7 +29,7 @@ public class GetFreeSpace {
 
     public static final String wfInviteLink = "https://workflowy.com/invite/3bf81761.emlx";
     public static final String wfRegisterUrl = "https://workflowy.com/accounts/register/";
-    public static final String tenMinutEmailUrl = "https://10minutemail.net/";
+    public static final String tenMinutEmailUrl = "https://www.10minutemail.net/";
 
     @Async
     public static void process() throws Exception{
@@ -65,13 +66,32 @@ public class GetFreeSpace {
     }
 
     public static String getEmailAddr(GetMethod visitEmailMethod) throws Exception {
+
+        String emailAddr="";
+
         Document doc = Jsoup.parse(getHtmlContent(visitEmailMethod));
-        String emailAddr = doc.getElementById("fe_text").val();
-        System.out.println(emailAddr);
+
+        if (!isCaptcha(doc)) {
+            Element feText = doc.getElementById("fe_text");
+            emailAddr = feText.val();
+            System.out.println(emailAddr);
+        }
 
         Precondition.checkStringArgument("getEmailAddr - emailAddr",emailAddr);
-
         return emailAddr;
+    }
+
+    private static boolean isCaptcha(Document doc) throws Exception{
+
+        Preconditions.checkNotNull(doc);
+
+        boolean isCaptcha = false;
+        Element feText = doc.getElementById("fe_text");
+        if (feText == null) {
+            throw new Exception("机器人异常!"
+            + "There are too many requested addresses from your IP. We need to make sure you are human. Please answer the CAPTCHA below, and click the submit button to get a confirmation.");
+        }
+        return isCaptcha;
     }
 
 
@@ -138,6 +158,8 @@ public class GetFreeSpace {
             }
         } catch (IOException ex) {
             log.error("dealWorkFlowy 处理失败,异常原因:{}" , ex);
+            log.error("线程{}异常.." , Thread.currentThread().getName());
+            Thread.currentThread().interrupt();
         } finally {
             visitWorkFlowyGetMethod.releaseConnection();
         }

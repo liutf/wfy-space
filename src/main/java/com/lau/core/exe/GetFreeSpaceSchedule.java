@@ -13,7 +13,7 @@ public class GetFreeSpaceSchedule {
 
     private static Logger logger = LoggerFactory.getLogger(GetFreeSpaceSchedule.class);
 
-    public static final int threadNum = 4;
+    public static final int threadNum = 2;
     public static final ExecutorService executor = Executors.newFixedThreadPool(threadNum);
 
     public static void startProcess(){

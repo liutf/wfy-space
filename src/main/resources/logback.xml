@@ -33,7 +33,7 @@
 		<appender-ref ref="lauAppender" />
 	</logger>
 
-	<root level="INFO">
+	<root level="ERROR">
 		<appender-ref ref="STDOUT" />
 	</root>
 

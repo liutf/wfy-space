@@ -25,8 +25,9 @@ public class GetFreeSpaceRunable implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
-            log.info("线程:" + Thread.currentThread().getName() + "运行中.....");
+        boolean isRun = true;
+        while (isRun) {
+            log.error("线程: [{}] 运行中.....",Thread.currentThread().getName());
             GetMethod visitEmailMethod = null;
             try {
 //                GetFreeSpace.process();
@@ -36,11 +37,14 @@ public class GetFreeSpaceRunable implements Runnable {
                 process(visitEmailMethod);
 
             } catch (Exception e) {
+                log.error("线程 [{}] 处理异常.异常原因: ",Thread.currentThread().getName(),e);
+                isRun = false;
                 Thread.currentThread().interrupt();
+                log.error("线程 [{}] 终止..",Thread.currentThread().getName());
             } finally {
                 visitEmailMethod.releaseConnection();
+                log.error("关闭连接..");
             }
-
         }
     }
 
@@ -51,7 +55,7 @@ public class GetFreeSpaceRunable implements Runnable {
 
             dealWorkFlowy(getEmailAddr(visitEmailMethod));
 
-            Thread.sleep(1000 * 20);
+            Thread.sleep(1000 * 10);
 
             dealEmailInbox(httpClient, visitEmailMethod);
         } else {
